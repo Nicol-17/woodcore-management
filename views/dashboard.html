@@ -250,6 +250,10 @@
 
                         <!-- inputs del formulario -->
                         <div class="container-form-tasks-content d-flex p-3">
+
+                            <!-- id proyecto -->
+                            <input type="hidden" id="id_proyecto" name="id_proyecto" value="${proyectoSeleccionado}">
+
                             <!-- Nombre tarea -->
                             <div class="form-task-section-1 d-flex flex-column me-4 w-100">
                                 <label for="nombre_task"> Nombre de la tarea:</label>
@@ -306,6 +310,9 @@
 
                         <!-- inputs del formulario -->
                         
+                        <!-- id proyecto -->
+                        <input type="hidden" id="id_proyecto" name="id_proyecto" value="${proyectoSeleccionado}">
+
                         <!-- id tarea -->
                         <input type="hidden" id="id_task" name="id_task">
 
@@ -577,14 +584,15 @@
             var des_task = document.getElementById("des_tasks").value;
             var encargado = document.getElementById("encargado").value;
             var sprint_task = document.getElementById("sprint_task").value;
-            if (nombre_task.trim() === "" || prioridad === "" || des_tasks.trim() === ""  || encargado.trim() === "" || sprint_task.trim() === "") {
+
+            if (nombre_task.trim() === "" || prioridad === "" || des_task.trim() === ""  || encargado.trim() === "" || sprint_task.trim() === "") {
                 alert("Por favor completa todos los campos obligatorios.");
                 return false;
             }else{
                 Swal.fire("Tarea creada exitosamente!");
             }
             return true;
-
+            
         }
     </script>
 </body>
