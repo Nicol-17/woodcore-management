@@ -191,7 +191,7 @@ h6 span {
     transition: all 200ms linear;
 }
 
-#btn {
+.btn-login {
     border-radius: 4px;
     height: 44px;
     font-size: 13px;
@@ -205,17 +205,21 @@ h6 span {
     display: -ms-inline-flexbox;
     display: inline-flex;
     align-items: center;
-    background-color: #000;
+    background-color: #fff;
     color: #000000;
+    margin: 20px;
 
 }
 
-.btn:hover {
+.btn-login:hover {
     background-color: #000000;
     color: #ffff;
     box-shadow: 0 8px 24px 0 rgba(16, 39, 112, .2);
 
 }
+
+
+
 
 #stars {
     width: 1px;

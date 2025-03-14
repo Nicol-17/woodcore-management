@@ -54,7 +54,7 @@
                                                     </div>
 
                                                     <!-- Botón Acceder -->
-                                                    <button type="submit" id="btn-login">Iniciar sesión</button>
+                                                    <button type="" id="btn-login" class="btn-login">Iniciar sesión</button>
 
                                                     <!-- Restablecer contraseña -->
                                                     <p class="mb-0 mt-4 text-center">
@@ -73,17 +73,17 @@
                                             <h4 class="mb-3 pb-3">Registrarse</h4>
                                             <form id="registroForm">
                                                 <div class="form-group">
-                                                    <input type="text" class="form-style" name="Nombre" id="Nombre"
+                                                    <input type="text" class="form-style" name="Nombre"
                                                         placeholder="Nombre completo" required>
                                                     <i class="input-icon uil uil-user"></i>
                                                 </div>
                                                 <div class="form-group mt-2">
-                                                    <input type="tel" class="form-style" name="Telefono" id="Telefono"
+                                                    <input type="tel" class="form-style" name="Telefono"
                                                         placeholder="Teléfono" required>
                                                     <i class="input-icon uil uil-phone"></i>
                                                 </div>
                                                 <div class="form-group mt-2">
-                                                    <input type="email" class="form-style" name="Correo_electronico" id="Correo_electronico"
+                                                    <input type="email" class="form-style" name="Correo_electronico"
                                                         placeholder="Correo electrónico" required>
                                                     <i class="input-icon uil uil-at"></i>
                                                 </div>
@@ -92,7 +92,7 @@
                                                         placeholder="Contraseña" required>
                                                     <i class="input-icon uil uil-lock-alt"></i>
                                                 </div>
-                                                <button type="submit" class="btn mt-4">Registrarse</button>
+                                                <button type="submit" class="btn-login mt-4">Registrarse</button>
                                             </form>
                                         </div>
                                     </div>
@@ -108,12 +108,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- script de funcionalidad de las tareas -->
+    <script src="js/main.js" type="module"></script>
+
 
     <script>
 
         document.getElementById("login-form").addEventListener("submit", async function (e) {
             e.preventDefault();
-            console.log("Formulario enviado");
 
             const correo = document.getElementById("correo").value;
             const contraseña = document.getElementById("contraseña").value;
@@ -121,77 +123,55 @@
             try {
                 const response = await fetch("http://localhost:8080/api/login", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        correo: correo,
-                        contraseña: contraseña
-                    }),
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ correo, contraseña })
                 });
 
-                if (response.ok) {
-                    const respuesta = await response.text(); // Leer como texto
-                    console.log("Respuesta del servidor:", respuesta);
+                const data = await response.json(); 
 
-                    try {
-                        const json = JSON.parse(respuesta); // Intentar convertir a JSON
-                        console.log("Es JSON:", json);
+                if (data.success) {
+                    console.log("Usuario autenticado:", data);
 
-                        if (json.success) {
-                            Swal.fire({
-                                title: "Login exitoso",
-                                text: "Redirigiendo al dashboard...",
-                                icon: "success"
-                            }).then(() => {
-                                window.location.href = "/dashboard";
-                                // Redireccionar si el login es exitoso
-                            });
-                        } else {
-                            Swal.fire({
-                                title: "Error",
-                                text: "Usuario o contraseña incorrectos.",
-                                icon: "error"
-                            });
-                        }
-                    } catch (e) {
-                        console.log("No es JSON, es texto plano.");
-                        Swal.fire({
-                            title: "Error",
-                            text: respuesta,
-                            icon: "error"
-                        });
+                    if (data.id) {
+                        localStorage.setItem("user", data.id);
+                        console.log("Usuario ID guardado en localStorage:", data.id);
+                    } else {
+                        console.error("Error: La API no devolvió el ID del usuario.");
                     }
-                } else {
+
                     Swal.fire({
-                        title: "Error",
-                        text: "Error al conectar con el servidor.",
-                        icon: "error"
+                        title: "Login exitoso",
+                        text: data.message,
+                        icon: "success"
+                    }).then(() => {
+                        window.location.href = "/dashboard";
                     });
+                } else {
+                    Swal.fire({ title: "Error", text: data.message, icon: "error" });
                 }
             } catch (error) {
                 console.error("Error:", error);
-                Swal.fire({
-                    title: "Error",
-                    text: "Error de conexión con el servidor.",
-                    icon: "error"
-                });
+                Swal.fire({ title: "Error", text: "Error de conexión con el servidor.", icon: "error" });
             }
         });
 
+
+
+
+
+
         document.getElementById("registroForm").addEventListener("submit", async (e) => {
             e.preventDefault(); // Evita el envío por defecto del formulario
-            
+
             try {
                 const res = await fetch("http://localhost:8080/crudusuario", {
-                    method: "POST", 
+                    method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         nombre_usuario: e.target.Nombre.value,
                         telefono_usuario: e.target.Telefono.value,
                         correo: e.target.Correo_electronico.value,
                         contraseña: e.target.contraseña.value
-
                     })
                 });
 
@@ -202,7 +182,7 @@
                         icon: "success"
                     });
                 } else {
-                    const errorData = await res.json(); 
+                    const errorData = await res.json(); // Captura el error que envía el backend
                     Swal.fire({
                         title: "Error en el registro",
                         text: errorData.message || "No se pudo completar el registro",

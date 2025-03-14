@@ -1,10 +1,15 @@
-const tareaSinHacer = document.getElementById("sinHacer");
-const tareasEnProceso = document.getElementById("Haciendo");
-const tareasRealizadas = document.getElementById("taskHecho");
+let tareaSinHacer = document.getElementById("sinHacer");
+let tareasEnProceso = document.getElementById("Haciendo");
+let tareasRealizadas = document.getElementById("taskHecho");
+
 // menú container dashboard
 const linkProyectos = document.getElementById("crearProyectos");
 const linkTareas = document.getElementById("crearTareas");
 // Código del archivo tareas.js para mostrar las tareas
+
+// Variable para guardar el id del proyecto seleccionado
+let proyectoSeleccionado = null;
+
 
 
 
@@ -16,188 +21,131 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchTareas();
 });
 
+
+
 // Función para cargar todas las tareas
 async function fetchTareas() {
-    let res = await fetch("http://localhost:8080/tasks")
-        .then(tareas => tareas.json())
-        .then(tareas => {
-
-            // Recorriendo cada uno de los elementos del conjunto de tareas
-            tareas.forEach(task => {
-
-                // Creando y asignando cada una de las propiedades de la tarea por cada una de las tareas 
-                const tarea_id = task.tarea_id;
-                const nombre_tarea = task.nombre_task; 
-                const prioridad = task.prioridad;
-                const resumen = task.des_tasks; 
-                const encargado = task.encargado; 
-                const sprint_tarea = task.sprint_task; 
-                
-
-
-                const fecha = new Date(sprint_tarea);
-                let año = fecha.getFullYear();
-                let mes = fecha.getMonth() + 1;
-                let dia = fecha.getDate();
-
-                const sprintFormateado = `${dia}/${mes}/${año}`;
-
-
-                // prueba
-                // console.log(sprint);
-
-                // creación de los elmentos para las tareas
-
-                // Contenedor padre principal de la tarea
-                const contenedorTarea = document.createElement("div");
-
-                // Parte del head de la tarea
-                const containerHeadTask = document.createElement("div");
-                const imgEncargado = document.createElement("img");
-                const containerNombre = document.createElement("div");
-                const nombreEncargado = document.createElement("p");
-                const legendEncargado = document.createElement("p");
-                const containerSprintTask = document.createElement("div");
-                const legendFechaTarea = document.createElement("p");
-                const sprintTarea = document.createElement("p");
-                const botonEditarTarea = document.createElement("button");
-                const iconEditarTarea = document.createElement("img");
-
-                // Parte del contenido de la tarea
-                const containerContenidoTarea = document.createElement("div");
-                const containerNombreTarea = document.createElement("div");
-                const nombreTarea = document.createElement("p");
-                const estadoActividad = document.createElement("p");
-                const descripcionTarea = document.createElement("p");
-                const boldTextDescripcion = document.createElement("b");
-                const containerPrioridad = document.createElement("div");
-                const legendPrioridadTarea = document.createElement("p");
-                const boldTextPrioridad = document.createElement("b");
-                const category = document.createElement("p");
-
-                // Parte del progreso de los estados de la tarea
-                const containerStates = document.createElement("div");
-                const firstState = document.createElement("div");
-                const secondtState = document.createElement("div");
-                const thirdtState = document.createElement("div");
-
-
-
-                // Definiendo los atributos y clases para caada elemento
-                contenedorTarea.classList.add("task", "d-flex", "flex-column", "rounded-top", "me-2", "mb-2");
-                contenedorTarea.setAttribute("tarea_id", tarea_id);
-                // console.log(contenedorTarea.getAttribute("id"));
-                contenedorTarea.setAttribute("draggable", true);
-
-                // Definición de las clases del container head de la tarea
-                containerHeadTask.classList.add("container-heading-task", "d-flex", "w-100", "align-items-center");
-                imgEncargado.classList.add("rounded-circle", "nav__img--avatar", "ms-2");
-                containerNombre.classList.add("d-flex", "flex-column", "ms-1", "align-items-start", "w-50");
-                nombreEncargado.classList.add("mb-0", "pt-2", "fw-bold");
-                legendEncargado.classList.add("t-encargado");
-                containerSprintTask.classList.add("d-flex", "flex-column", "align-items-end", "me-3", "w-50");
-                legendFechaTarea.classList.add("mb-0", "mt-2", "t-fecha");
-                sprintTarea.classList.add("fecha", "me-1");
-                botonEditarTarea.classList.add("btn-abrir-form-edit-tasks", "align-self-start");
-                iconEditarTarea.classList.add("edit-task-icon");
-
-                // Definición de las clases del contenido de la tarea
-                containerContenidoTarea.classList.add("desc-task", "d-flex", "flex-column", "justify-content-center", "ms-2", "mt-2");
-                containerNombreTarea.classList.add("d-flex", "mb-2", "mt-2");
-                nombreTarea.classList.add("mb-0", "fw-bold", "fs-5", "mt-3", "name-task");
-                estadoActividad.classList.add("mb-0", "text-wrap", "bg-success", "rounded-pill", "text-center", "state", "ms-1", "align-self-center", "me-1", "flex-shrink-0");
-                descripcionTarea.classList.add("mb-2");
-                containerPrioridad.classList.add("container-prioridad", "d-flex");
-                legendPrioridadTarea.classList.add("mb-1", "me-2");
-                category.classList.add("category", "text-wrap", "w-50", "rounded-pill", "text-center", "mb-0");
-
-
-                // Definición de las clases de los estados de progreso de las tareas
-                containerStates.classList.add("states", "d-flex", "justify-content-between", "align-items-end", "ms-3", "mt-3");
-                firstState.classList.add("first-state", "rounded-pill", "w-50", "me-1");
-                secondtState.classList.add("second-state", "rounded-pill", "w-50", "me-1");
-                thirdtState.classList.add("third-state", "rounded-pill", "w-50");
-
-
-
-
-                // Agregando el contenido de las tareas
-                // Agregando el contenido a la parte del head de la tarea
-                imgEncargado.setAttribute("src", "../img/persona06.jpg");
-                nombreEncargado.innerText = encargado;
-                legendEncargado.innerText = "Encargado";
-                legendFechaTarea.innerText = "Fecha límite";
-                sprintTarea.innerText = sprintFormateado;
-                iconEditarTarea.setAttribute("src", "../img/edit.png");
-
-                // Agregando el contendio del contenido de la tarea
-                nombreTarea.innerText = nombre_tarea;
-                estadoActividad.innerText = "Activa";
-                boldTextDescripcion.innerText = "Descripción: ";
-                descripcionTarea.innerHTML = resumen;
-                boldTextPrioridad.innerText = "Prioridad:";
-                category.innerText = prioridad;
+    try {
+        const response = await fetch("http://localhost:8080/tasks");
+        if (!response.ok) {
+            throw new Error(`Error HTTP! Status: ${response.status}`);
+        }
+        const tareas = await response.json();
+        console.log("Tareas obtenidas:", tareas);
+        
+        tareaSinHacer.innerHTML = "";
+        
+        tareas.forEach(task => {
+            console.log("Agregando tarea al DOM:", task);
             
-
-                // Agregando los elementos a la tarea y al DOM
-                contenedorTarea.appendChild(containerHeadTask);
-                contenedorTarea.appendChild(containerContenidoTarea);
-                contenedorTarea.appendChild(containerStates);
-
-                // Agregando los elementos al head de la tarea                
-                containerHeadTask.appendChild(imgEncargado);
-                containerHeadTask.appendChild(containerNombre);
-                containerNombre.appendChild(nombreEncargado);
-                containerNombre.appendChild(legendEncargado);
-                containerHeadTask.appendChild(containerSprintTask);
-                containerSprintTask.appendChild(legendFechaTarea);
-                containerSprintTask.appendChild(sprintTarea);
-                containerHeadTask.appendChild(botonEditarTarea);
-                botonEditarTarea.appendChild(iconEditarTarea);
-
-                // Agregando los elementos al contenido de la tarea
-                containerContenidoTarea.appendChild(containerNombreTarea);
-                containerNombreTarea.appendChild(nombreTarea);
-                containerNombreTarea.appendChild(estadoActividad);
-                descripcionTarea.insertAdjacentElement("afterbegin", boldTextDescripcion);
-                containerContenidoTarea.appendChild(descripcionTarea);
-                containerContenidoTarea.appendChild(containerPrioridad);
-                legendPrioridadTarea.appendChild(boldTextPrioridad);
-                containerPrioridad.appendChild(legendPrioridadTarea);
-                containerPrioridad.appendChild(category);
-
-                // Agregando los elementos a la barra de progreso de states
-                containerStates.appendChild(firstState);
-                containerStates.appendChild(secondtState);
-                containerStates.appendChild(thirdtState);
-
-                // Agregando la tarea el DOM
-                tareaSinHacer.appendChild(contenedorTarea);
-
-            });
-
-            obtenerYCrearEventosTareas();
-            aplicarPrimerEstado();
-            abrirModalEditTasks();
-
-        })
-        .catch(err => console.log("error al cargar las tareas: ", err))
-
+            const contenedorTarea = document.createElement("div");
+            contenedorTarea.classList.add("task", "d-flex", "flex-column", "rounded-top", "me-2", "mb-2");
+            contenedorTarea.setAttribute("tarea_id", task.tarea_id);
+            contenedorTarea.setAttribute("draggable", true);
+            
+            const containerHeadTask = document.createElement("div");
+            const imgEncargado = document.createElement("img");
+            const containerNombre = document.createElement("div");
+            const nombreEncargado = document.createElement("p");
+            const legendEncargado = document.createElement("p");
+            const containerSprintTask = document.createElement("div");
+            const legendFechaTarea = document.createElement("p");
+            const sprintTarea = document.createElement("p");
+            const botonEditarTarea = document.createElement("button");
+            const iconEditarTarea = document.createElement("img");
+            
+            const containerContenidoTarea = document.createElement("div");
+            const containerNombreTarea = document.createElement("div");
+            const nombreTarea = document.createElement("p");
+            const estadoActividad = document.createElement("p");
+            const descripcionTarea = document.createElement("p");
+            const boldTextDescripcion = document.createElement("b");
+            const containerPrioridad = document.createElement("div");
+            const legendPrioridadTarea = document.createElement("p");
+            const boldTextPrioridad = document.createElement("b");
+            const category = document.createElement("p");
+            
+            containerHeadTask.classList.add("container-heading-task", "d-flex", "w-100", "align-items-center");
+            imgEncargado.classList.add("rounded-circle", "nav__img--avatar", "ms-2");
+            containerNombre.classList.add("d-flex", "flex-column", "ms-1", "align-items-start", "w-50");
+            nombreEncargado.classList.add("mb-0", "pt-2", "fw-bold");
+            legendEncargado.classList.add("t-encargado");
+            containerSprintTask.classList.add("d-flex", "flex-column", "align-items-end", "me-3", "w-50");
+            legendFechaTarea.classList.add("mb-0", "mt-2", "t-fecha");
+            sprintTarea.classList.add("fecha", "me-1");
+            botonEditarTarea.classList.add("btn-abrir-form-edit-tasks", "align-self-start");
+            iconEditarTarea.classList.add("edit-task-icon");
+            
+            containerContenidoTarea.classList.add("desc-task", "d-flex", "flex-column", "justify-content-center", "ms-2", "mt-2");
+            containerNombreTarea.classList.add("d-flex", "mb-2", "mt-2");
+            nombreTarea.classList.add("mb-0", "fw-bold", "fs-5", "mt-3", "name-task");
+            estadoActividad.classList.add("mb-0", "text-wrap", "bg-success", "rounded-pill", "text-center", "state", "ms-1", "align-self-center", "me-1", "flex-shrink-0");
+            descripcionTarea.classList.add("mb-2");
+            containerPrioridad.classList.add("container-prioridad", "d-flex");
+            legendPrioridadTarea.classList.add("mb-1", "me-2");
+            category.classList.add("category", "text-wrap", "w-50", "rounded-pill", "text-center", "mb-0");
+            
+            imgEncargado.setAttribute("src", "../img/persona06.jpg");
+            nombreEncargado.innerText = task.encargado;
+            legendEncargado.innerText = "Encargado";
+            legendFechaTarea.innerText = "Fecha límite";
+            sprintTarea.innerText = task.sprint_tarea;
+            iconEditarTarea.setAttribute("src", "../img/edit.png");
+            
+            nombreTarea.innerText = task.nombre_task;
+            estadoActividad.innerText = "Activa";
+            boldTextDescripcion.innerText = "Descripción: ";
+            descripcionTarea.innerHTML = task.des_tasks;
+            boldTextPrioridad.innerText = "Prioridad:";
+            category.innerText = task.prioridad;
+            
+            contenedorTarea.appendChild(containerHeadTask);
+            containerHeadTask.appendChild(imgEncargado);
+            containerHeadTask.appendChild(containerNombre);
+            containerNombre.appendChild(nombreEncargado);
+            containerNombre.appendChild(legendEncargado);
+            containerHeadTask.appendChild(containerSprintTask);
+            containerSprintTask.appendChild(legendFechaTarea);
+            containerSprintTask.appendChild(sprintTarea);
+            containerHeadTask.appendChild(botonEditarTarea);
+            botonEditarTarea.appendChild(iconEditarTarea);
+            
+            containerContenidoTarea.appendChild(containerNombreTarea);
+            containerNombreTarea.appendChild(nombreTarea);
+            containerNombreTarea.appendChild(estadoActividad);
+            descripcionTarea.insertAdjacentElement("afterbegin", boldTextDescripcion);
+            containerContenidoTarea.appendChild(descripcionTarea);
+            containerContenidoTarea.appendChild(containerPrioridad);
+            legendPrioridadTarea.appendChild(boldTextPrioridad);
+            containerPrioridad.appendChild(legendPrioridadTarea);
+            containerPrioridad.appendChild(category);
+            
+            contenedorTarea.appendChild(containerContenidoTarea);
+            tareaSinHacer.appendChild(contenedorTarea);
+        });
+    } catch (error) {
+        console.error("Error al cargar las tareas:", error);
+    }
 }
+
+
 
 // Función para cargar tareas de un proyecto específico
 async function cargarTareasProyecto(idProyecto) {
     try {
+        console.log("Solicitando tareas para id_proyecto:", idProyecto);
         const response = await fetch(`http://localhost:8080/tasks/proyecto/${idProyecto}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const tareas = await response.json();
+        console.log("Tareas recibidas del backend:", tareas);
 
         // Limpiar el contenedor de tareas antes de agregar nuevas
         tareaSinHacer.innerHTML = '';
 
         tareas.forEach(task => {
+            
 
             // Creando y asignando cada una de las propiedades de la tarea por cada una de las tareas 
             const tarea_id = task.tarea_id;
@@ -318,6 +266,7 @@ async function cargarTareasProyecto(idProyecto) {
             contenedorTarea.appendChild(containerContenidoTarea);
             contenedorTarea.appendChild(containerStates);
 
+
             // Agregando los elementos al head de la tarea                
             containerHeadTask.appendChild(imgEncargado);
             containerHeadTask.appendChild(containerNombre);
@@ -346,13 +295,16 @@ async function cargarTareasProyecto(idProyecto) {
             containerStates.appendChild(thirdtState);
 
             // Agregando la tarea el DOM
+            
             tareaSinHacer.appendChild(contenedorTarea);
 
         });
+        
 
         obtenerYCrearEventosTareas();
         aplicarPrimerEstado();
         abrirModalEditTasks();
+        
 
     } catch (error) {
         console.error("Error al cargar las tareas del proyecto:", error);
@@ -413,7 +365,7 @@ const legendProgress = document.createElement("p");
 const progress = document.createElement("div");
 
 // variable para guardar el id del proyecto
-let proyectoSeleccionado = null;
+
 
 // FUNCIONALIDAD PARA OBTENER LOS PROYECTOS DE LA BASE DE DATOS Y MOSTRARLAS EN PANTALLA
 async function mostrarProyectos() {
@@ -457,8 +409,9 @@ async function mostrarProyectos() {
                 textImgCover.addEventListener("click", function (e) {
                     e.preventDefault(); 
 
-                     // Guardar el ID del proyecto seleccionado
+                    // Guardar el ID del proyecto seleccionado
                     proyectoSeleccionado = id_proyecto;
+
 
                     titleDashboard.innerText = `Proyecto: ${nombre_proyecto}`;
 
@@ -467,41 +420,42 @@ async function mostrarProyectos() {
 
                     // Vaciar el contenedor de tareas antes de cargar nuevas
                     const taskContainer = document.getElementById("container-dashboard");
-                    taskContainer.innerHTML = "";
+
 
                     taskContainer.innerHTML = `
-                    <div>
+                     <div>
                         <h4 class="text-center title-tasks"> Tareas sin hacer</h4>
                         <div class="container-task sinHacer me-2 ms-3 p-1" id="sinHacer">
                             <button class="btn-task abrir-form">
                                 <img src="../img/svg/plus-square.svg" class="icon-btn">
                                 Agregar Tarea
                             </button>
-
                         </div>
-                    </div>
-
-                    <div>
-                        <h4 class="text-center title-tasks">Tareas en Proceso</h4>
-                        <div class="container-task Haciendo me-2 d-flex flex-column  p-1" id="Haciendo">
-                            <button class="btn-task abrir-form">
-                                <img src="../img/svg/plus-square.svg" class="icon-btn">
-                                Agregar Tarea
-                            </button>
                         </div>
-                    </div>
-
-                    <div>
-                        <h4 class="text-center title-tasks">Tareas Realizadas</h4>
-                        <div class="container-task taskHecho me-2 p-1" id="taskHecho">
-                            <button class="btn-task abrir-form">
-                                <img src="../img/svg/plus-square.svg" class="icon-btn">
-                                Agregar Tarea
-                            </button>
+                        <div>
+                            <h4 class="text-center title-tasks">Tareas en Proceso</h4>
+                            <div class="container-task Haciendo me-2 d-flex flex-column  p-1" id="Haciendo">
+                                <button class="btn-task abrir-form">
+                                    <img src="../img/svg/plus-square.svg" class="icon-btn">
+                                    Agregar Tarea
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                        <div>
+                            <h4 class="text-center title-tasks">Tareas Realizadas</h4>
+                            <div class="container-task taskHecho me-2 p-1" id="taskHecho">
+                                <button class="btn-task abrir-form">
+                                    <img src="../img/svg/plus-square.svg" class="icon-btn">
+                                    Agregar Tarea
+                                </button>
+                            </div>
+                        </div>
                 `;
                 
+                tareaSinHacer = document.getElementById("sinHacer");
+                tareasEnProceso = document.getElementById("Haciendo");
+                tareasRealizadas = document.getElementById("taskHecho");
+
                 const abrirModalForm = document.querySelectorAll(".abrir-form");
                 const cerrarModalForm = document.querySelectorAll("#cerrar-form");
                 const modalForm = document.querySelectorAll("#modal-form")
@@ -521,9 +475,12 @@ async function mostrarProyectos() {
                         })
                     })
                 })
-
                     // Cargar solo las tareas asociadas a este proyecto
                     cargarTareasProyecto(id_proyecto);
+                    console.log(`Cargando tareas para el proyecto: ${id_proyecto}`);
+
+
+
                 });
 
                 // Agregar imagen y enlace al contenedor de imagen
@@ -619,6 +576,7 @@ function aplicarPrimerEstado() {
         const thirdState = tarea.children[2].children[2];
 
         firstState.classList.add("bg-primary");
+        
     })
 
 
@@ -709,6 +667,7 @@ async function obtenerYCrearEventosTareas() {
         console.log(err);
     }
 }
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -842,15 +801,14 @@ modalForm.forEach(form => {
     formCreatTask.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        // Verifica si los campos existen y están obteniendo valores correctos
-        // console.log(document.querySelector('#nombre_task').value);
-        // console.log(document.querySelector('#prioridad').value);
-        // console.log(document.querySelector('#des_tasks').value);
-        // console.log(document.querySelector('#encargado').value);
-        // console.log(document.querySelector('#sprint_task').value);
+        // Usar la variable proyectoSeleccionado directamente
+        if (!proyectoSeleccionado) {
+            console.error("Error: proyectoSeleccionado no está definido antes de enviar la tarea.");
+            alert("Error: No se ha seleccionado un proyecto. Por favor, selecciona un proyecto primero.");
+            return;
+        }
 
-        const idProyecto = document.querySelector('#id_proyecto').value;
-        console.log("id proyecto tarea:", document.querySelector('#id_proyecto'));
+        console.log("id proyecto tarea:", proyectoSeleccionado);
 
         const res = await fetch("http://localhost:8080/tasks", {
             method: "POST",
@@ -865,14 +823,13 @@ modalForm.forEach(form => {
                     encargado: document.querySelector('#encargado').value,
                     sprint_task: document.querySelector('#sprint_task').value,
                 },
-                idProyecto: idProyecto
+                idProyecto: proyectoSeleccionado 
             })
         });
-        
+
         console.log('Respuesta:', res);
     });
 });
-
 
 //Funcionalidad para abir y cerrar el form de editar tareas
 
@@ -1262,6 +1219,7 @@ verTareas.addEventListener("click", function () {
     titleDashboard.innerText = "Tareas";
     containerDashboard.style.display = "flex";
     containerDashboardProyectos.style.display = "none";
+
 });
 
 //Funcionalidad de reporte en pdf
