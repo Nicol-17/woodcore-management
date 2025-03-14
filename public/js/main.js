@@ -826,8 +826,8 @@ modalForm.forEach(form => {
                 idProyecto: proyectoSeleccionado 
             })
         });
-
         console.log('Respuesta:', res);
+
     });
 });
 
@@ -847,7 +847,7 @@ function abrirModalEditTasks() {
     const inputEncargadoTarea = formEditTask[0].querySelector("input[name='encargado']");
     const inputSelectPrioridad = formEditTask[0].querySelector("select[name='prioridad']");
     const inputSprint = formEditTask[0].querySelector("input[name= 'sprint_task']");
-    // const inputIdTaskProject = formEditTask[0].querySelector("input[name='id_proyecto']") 
+    const inputIdTaskProject = formEditTask[0].querySelector("input[name='id_proyecto']") 
     const optionsSelectPrioridad = inputSelectPrioridad.children;
 
     
@@ -896,6 +896,7 @@ function abrirModalEditTasks() {
                     inputDescTarea.value = tareaAActualizar.des_tasks;
                     inputEncargadoTarea.value = tareaAActualizar.encargado;
                     inputSprint.value = tareaAActualizar.sprint_task;
+                    inputIdTaskProject.value = proyectoSeleccionado;
 
 
                     // // Seleccionar la prioridad correcta en el select
@@ -919,9 +920,9 @@ function abrirModalEditTasks() {
     formEditTask.forEach(form => {
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            
+    
             const idTarea = e.target['id_task'].value;
-                console.log("ID de la tarea:", idTarea);
+            console.log("ID de la tarea:", idTarea);
     
             if (isNaN(idTarea)) {
                 console.error("El id de la tarea no es válido");
@@ -929,15 +930,20 @@ function abrirModalEditTasks() {
             }
     
             const updatedTask = {
+                taskEntity: {
                 tarea_id: e.target['id_task'].value,
                 nombre_task: e.target['nombre_task'].value,
                 prioridad: e.target['prioridad'].value,
                 des_tasks: e.target['des_tasks'].value,
                 encargado: e.target['encargado'].value,
-                sprint_task: e.target['sprint_task'].value
+                sprint_task: e.target['sprint_task'].value,
+                },
+                idProyecto: proyectoSeleccionado 
             };
-            console.log(updatedTask);
             
+            console.log( "tarea actualizar",id_task);
+            console.log(updatedTask);
+    
             try {
                 const response = await fetch(`http://localhost:8080/tasks/${idTarea}`, {
                     method: "PUT",
@@ -951,37 +957,47 @@ function abrirModalEditTasks() {
                     alert("Tarea actualizada con éxito");
                     location.reload();  // Recargar la página para reflejar los cambios
                 } else {
-                    console.log("Error al actualizar la tarea");
+                    const errorData = await response.json();
+                    console.error("Error al actualizar la tarea:", errorData);
+                    alert("Error al actualizar la tarea. Por favor, inténtalo de nuevo.");
                 }
     
             } catch (err) {
                 console.error("Error al enviar los datos:", err);
+                alert("Error al enviar los datos. Por favor, inténtalo de nuevo.");
             }
         });
     });
-
+    
     // Funcionalidad para eliminar la tarea seleccionada
     const buttonDeleteTask = document.getElementById("delete-task");
-
+    
     buttonDeleteTask.addEventListener("click", async (e) => {
-        if(confirm('¿Estás seguro de que quieres eliminar esta tarea?')){
+        if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
             const idTarea = document.querySelector("input[name='id_task']").value;
-        
+    
             if (!idTarea) {
                 console.error("No se encontró un ID de tarea válido.");
                 return;
             }
-        
-            const result = await fetch(`http://localhost:8080/tasks/${idTarea}`, {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" }
-            });
-        
-            if (result.ok) {
-                alert("Tarea eliminada con éxito");
-                location.reload();
-            } else {
-                console.log("ERROR AL ELIMINAR LA TAREA");
+    
+            try {
+                const response = await fetch(`http://localhost:8080/tasks/${idTarea}?idProyecto=${proyectoSeleccionado}`, { 
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" }
+                });
+    
+                if (response.ok) {
+                    alert("Tarea eliminada con éxito");
+                    location.reload();
+                } else {
+                    const errorData = await response.json();
+                    console.error("ERROR AL ELIMINAR LA TAREA:", errorData);
+                    alert("Error al eliminar la tarea. Por favor, inténtalo de nuevo.");
+                }
+            } catch (err) {
+                console.error("Error al eliminar la tarea:", err);
+                alert("Error al eliminar la tarea. Por favor, inténtalo de nuevo.");
             }
         }
     });

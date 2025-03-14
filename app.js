@@ -1,71 +1,49 @@
-const express = require("express");
-const path = require("path");
-const morgan = require("morgan");
-const cors = require("cors");
-const usersRoutes = require("./routes/usersRoutes");
-const tareasRoutes = require("./routes/tareasRoutes");
-const proyectosRoutes = require("./routes/proyectosRoutes");
+import express from "express";
+import path from "path";
+import morgan from "morgan";
+import cors from "cors";
+import usersRoutes from "./routes/usersRoutes.js"; 
+import tareasRoutes from "./routes/tareasRoutes.js";
+import proyectosRoutes from "./routes/proyectosRoutes.js";
+import { PORT } from './model/config.js';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-
-// inicialización de express
 const app = express();
 
-
-
-
-///////////////////////////////////////////////////
-////////////////// MIDDLEWARES ////////////////////
-
-// para la configuración de morgan
 app.use(morgan("dev"));
-// Para la configuración de CORS
 app.use(cors());
-// configuración de los archivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
-// Configuración de las vistas
-app.set("views", path.join(__dirname, "views"))
-// Para que se puedan interpretar los datos
+app.set("views", path.join(__dirname, "views"));
 app.use(express.json());
-//para la codificación de las url
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({ extended: false }));
 
+app.get("/", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "views/index.html"));
+});
 
-
-
-///////////////////////////////////////////////////
-//////////////////// RUTAS ////////////////////////
-
-// Para mostrar el landing page
-app.get("/", (req, res) =>{
-    res.sendfile(path.resolve("views/index.html"));
-})
-// Para mostrar el dashboard
 app.get("/dashboard", (req, res) => {
-    res.sendfile(path.resolve("views/dashboard.html"));
-})
-// Para mostrar el login
-app.get("/login", (req, res) =>{
-    res.sendfile(path.resolve("views/inicio_sesion.html"))
-})
-// Para mostrar el registro
-app.get("/sig-up", (req, res) =>{
-    res.sendfile(path.resolve("views/registro.html"))
-})
-// Para mostrar el form de recuperar
+    res.sendFile(path.resolve(__dirname, "views/dashboard.html"));
+});
+
+app.get("/login", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "views/inicio_sesion.html"));
+});
+
+app.get("/sig-up", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "views/registro.html"));
+});
+
 app.get("/recuperar", (req, res) => {
-    res.sendfile(path.resolve("views/recuperar.html"))
-})
+    res.sendFile(path.resolve(__dirname, "views/recuperar.html"));
+});
 
-
-// Para los proyectos y tareas
 app.use("/dashboard/tasks", tareasRoutes);
 app.use("/dashboard/projects", proyectosRoutes);
-// Para los usuarios
-app.use("/users", usersRoutes);
+app.use("/users", usersRoutes); 
 
-
-
-app.listen(3000,function(){
-    console.log("servidor creado correctamente: http://localhost:3000")
-})
+app.listen(PORT, function () {
+    console.log("servidor creado correctamente:", PORT);
+});
